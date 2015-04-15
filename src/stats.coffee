@@ -2,7 +2,7 @@ StatsD = require('node-statsd').StatsD
 url    = require 'url'
 _ = require 'underscore'
 
-class SDClient
+class Stats
   constructor: ({@namespace, sdUrl}) ->
     sdUrl = url.parse(sdUrl || 'udp://127.0.0.1:8125')
     @namespace ||= (sdUrl.path && sdUrl.path[1..-1]) || 'flowdock'
@@ -52,4 +52,4 @@ class SDClient
     res.contentType 'application/json'
     res.send JSON.stringify status
 
-module.exports = SDClient
+module.exports = Stats
