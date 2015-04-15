@@ -50,6 +50,6 @@ class Stats
       counters: @stats
       keys: keys
     res.contentType 'application/json'
-    res.send JSON.stringify status
+    res.send JSON.stringify status, null, 4
 
 module.exports = Stats
