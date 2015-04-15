@@ -1,0 +1,32 @@
+{
+  "name": "stats",
+  "private": true,
+  "version": "0.1.0",
+  "author": "Flowdock",
+  "main": "src/statsd",
+  "description": "Statsd client and status endpoint",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/flowdock/stats.git"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec --compilers coffee:coffee-script"
+  },
+  "devDependencies": {
+    "colors": "^1.0.3",
+    "http-proxy": "~>1.9.0",
+    "mocha": "~>1.3.2",
+    "should": "~>0.6.0",
+    "socket.io-client": "0.9.10"
+  },
+  "dependencies": {
+    "coffee-script": "1.3.3",
+    "express": "~>3.0.0",
+    "node-statsd": "0.0.7",
+    "underscore": "^1.8.3",
+    "winston": "^0.9.0"
+  },
+  "engines": {
+    "node": "0.12.0"
+  }
+}
