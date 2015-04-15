@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "author": "Flowdock",
-  "main": "src/statsd",
+  "main": "src/stats",
   "description": "Statsd client and status endpoint",
   "repository": {
     "type": "git",
