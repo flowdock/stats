@@ -13,9 +13,7 @@ class Stats
       dnsCache: true
 
     @keys = {}
-    @stats =
-      'messageLastQueuedAt': null
-      'messageLastDeliveredAt': null
+    @stats = {}
 
   increment: (stat, count = 1, sampleRate = 1) ->
     @sd.increment(stat, count, sampleRate)
