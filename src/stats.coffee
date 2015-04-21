@@ -37,16 +37,13 @@ class Stats
     @keys[key] = value
 
   render: (req, res) =>
-    keys = {}
+    status = _.clone @stats
     _.forEach @keys, (v, k) ->
-      keys[k] =
+      status[k] =
         if _.isFunction v
           v null
         else
           v
-    status =
-      counters: @stats
-      keys: keys
     res.contentType 'application/json'
     res.send JSON.stringify status, null, 4
 
