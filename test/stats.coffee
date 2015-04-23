@@ -1,6 +1,7 @@
 Stats = require '../src/stats'
 require 'should'
 sinon = require 'sinon'
+{EventEmitter} = require 'events'
 
 describe 'stats', ->
   beforeEach ->
@@ -15,6 +16,17 @@ describe 'stats', ->
       @clock.restore()
 
   describe 'gauge', ->
+    it 'reacts to events from an event emitter', ->
+      events = new EventEmitter
+      @stats.gauge 'evented',
+        event: 'bar'
+        from: events
+      @stats.stats.evented.should.eql 0
+      events.emit 'foo', 1
+      @stats.stats.evented.should.eql 0
+      events.emit 'bar', 10
+      @stats.stats.evented.should.eql 10
+
     it 'periodically polls an argument function', ->
       value = 1
       @stats.gauge 'foo', -> value

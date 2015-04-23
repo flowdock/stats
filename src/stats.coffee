@@ -34,10 +34,17 @@ class Stats
   gauge: (stat, amount, sampleRate = 1) ->
     if _.isFunction amount
       @_gaugePoller stat, amount, sampleRate
+    else if amount.event && amount.from
+      @_gaugeEvent stat, amount, sampleRate
     else
       @sd.gauge(stat, amount, sampleRate)
       @stats[stat] ||= 0
       @stats[stat] = amount
+
+  _gaugeEvent: (stat, {event, from}, rate) ->
+    @gauge stat, 0, rate
+    from.on event, (level) =>
+      @gauge stat, level, rate
 
   _pollGauges: =>
     _.forEach @_gaugePolls, ({fn, rate}, stat) =>
