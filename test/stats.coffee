@@ -1,14 +1,29 @@
 Stats = require '../src/stats'
 require 'should'
+sinon = require 'sinon'
 
 describe 'stats', ->
   beforeEach ->
-    @stats = new Stats namespace: 'foo'
+    @clock = sinon.useFakeTimers()
+    @stats = new Stats namespace: 'foo', gaugePollPeriodMs: 5 * 1000
     @res =
       contentType: (type) ->
         @_contentType = type
       send: (payload) ->
         @_payload = payload
+    afterEach ->
+      @clock.restore()
+
+  describe 'gauge', ->
+    it 'periodically polls an argument function', ->
+      value = 1
+      @stats.gauge 'foo', -> value
+      @stats.stats.foo.should.eql 1
+      value = 10
+      @clock.tick 1000
+      @stats.stats.foo.should.eql 1
+      @clock.tick 10 * 1000
+      @stats.stats.foo.should.eql 10
 
   it 'can increment value', ->
     @stats.increment 'counter', 1
