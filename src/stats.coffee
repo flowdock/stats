@@ -3,7 +3,8 @@ url    = require 'url'
 _ = require 'underscore'
 
 class Stats
-  constructor: ({@namespace, sdUrl}) ->
+  constructor: ({@namespace, sdUrl, @gaugePollPeriodMs}) ->
+    @gaugePollPeriodMs ||= 10 * 1000
     sdUrl = url.parse(sdUrl || 'udp://127.0.0.1:8125')
     @namespace ||= (sdUrl.path && sdUrl.path[1..-1]) || 'flowdock'
     @sd = new StatsD
@@ -14,6 +15,8 @@ class Stats
 
     @keys = {}
     @stats = {}
+    @_gaugePolls = {}
+    setInterval @_pollGauges, @gaugePollPeriodMs
 
   increment: (stat, count = 1, sampleRate = 1) ->
     @sd.increment(stat, count, sampleRate)
@@ -29,9 +32,33 @@ class Stats
     @sd.timing stat, time, sampleRate
 
   gauge: (stat, amount, sampleRate = 1) ->
-    @sd.gauge(stat, amount, sampleRate)
-    @stats[stat] ||= 0
-    @stats[stat] = amount
+    if _.isFunction amount
+      @_gaugePoller stat, amount, sampleRate
+    else if amount.event && amount.from
+      @_gaugeEvent stat, amount, sampleRate
+    else
+      @sd.gauge(stat, amount, sampleRate)
+      @stats[stat] ||= 0
+      @stats[stat] = amount
+
+  _gaugeEvent: (stat, {event, from}, rate) ->
+    @gauge stat, 0, rate
+    from.on event, (level) =>
+      @gauge stat, level, rate
+
+  _pollGauges: =>
+    _.forEach @_gaugePolls, ({fn, rate}, stat) =>
+      now = fn()
+      @sd.gauge stat, now, rate
+      @stats[stat] = now
+
+  _gaugePoller: (stat, fn, sampleRate) ->
+    now = fn()
+    @sd.gauge stat, now, sampleRate
+    @stats[stat] = now
+    @_gaugePolls[stat] =
+      fn: fn
+      sampleRate: sampleRate
 
   key: (key, value) ->
     @keys[key] = value
