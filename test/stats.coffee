@@ -12,8 +12,9 @@ describe 'stats', ->
         @_contentType = type
       send: (payload) ->
         @_payload = payload
-    afterEach ->
-      @clock.restore()
+
+  afterEach ->
+    @clock.restore()
 
   describe 'gauge', ->
     it 'reacts to events from an event emitter', ->

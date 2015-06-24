@@ -1,4 +1,4 @@
-StatsD = require('node-statsd').StatsD
+StatsD = require('node-statsd')
 url    = require 'url'
 _ = require 'underscore'
 
@@ -11,7 +11,7 @@ class Stats
       host: sdUrl.hostname
       port: sdUrl.port
       prefix: @namespace + '-' + process.env.PORT + '.'
-      dnsCache: true
+      cacheDns: true
 
     @keys = {}
     @stats = {}
